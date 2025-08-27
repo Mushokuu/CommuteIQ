@@ -1,161 +1,107 @@
-This project is an end-to-end data pipeline that acquires live public transit data for Delhi, analyzes patterns, and uses a machine learning model to recommend the optimal travel time for any bus route, taking future weather conditions into account.
+Real-Time Public Transport Forecaster for Delhi
+This project is an end-to-end data pipeline that acquires live public transit data for Delhi, analyzes historical patterns, and uses a machine learning model to recommend the optimal travel time for any bus route, taking future weather conditions into account.
 
 🚀 Project Objective
-
-The goal is to solve a common urban mobility challenge: predicting bus travel times in a city with dynamic traffic and weather. The application provides a recommendation engine that helps users decide the best time to start their journey to minimize travel duration.
+The goal of this project is to solve a common urban mobility challenge: predicting bus travel times in a city with dynamic traffic and weather. The application provides a smart recommendation engine that helps users decide the best time to start their journey to minimize travel duration.
 
 🌟 Key Features
-
 Live Data Ingestion: Connects to Delhi's official GTFS-Realtime API to fetch live bus locations every minute.
 
-Data Enrichment: Enriches transit records with current and forecasted weather from OpenWeatherMap.
+Data Enrichment: Enriches the transit data with both current and forecasted weather conditions from the OpenWeatherMap API.
 
-Automated Data Cleaning: Filters invalid real-world data (e.g., GPS pings at 0,0) and normalizes timestamps.
+Automated Data Cleaning: Includes a robust cleaning layer to filter out invalid real-world data (e.g., buses reporting 0,0 coordinates).
 
-Persistent Storage: Stores collected RT data in a lightweight SQLite database, building a dataset over time.
+Persistent Storage: Stores all historical data in a lightweight SQLite database, building a valuable dataset over time.
 
-Advanced SQL Analysis: A module runs optimized SQL queries (joins, aggregations, window functions) to surface commuter insights.
+Advanced SQL Analysis: A dedicated module runs complex SQL queries (using JOINS, Aggregations, and Window Functions) to derive historical insights.
 
-ML-Powered Recommendations: A scikit-learn model predicts travel times and recommends optimal departure windows based on forecasted weather.
+ML-Powered Recommendations: Uses a trained scikit-learn model to predict travel times and recommend the optimal departure window based on future weather forecasts.
 
-Terminal-Based UI: A minimal CLI exposes predefined, SQL-backed commuter reports and ML forecasts.
+Terminal-Based UI: A simple, clean command-line interface makes the analysis and predictions easily accessible.
 
 🛠️ Tech Stack
-
 Language: Python
 
-Data Science & ML: scikit-learn, pandas
+Data Science & ML: scikit-learn, Pandas
 
-APIs / Ingestion: REST APIs, GTFS-Realtime, requests
+Data Engineering & APIs: REST APIs, GTFS-Realtime, Requests
 
-Database / Querying: SQLite, SQL
+Database: SQL, SQLite
 
 ⚙️ Project Architecture
+The application is built as a 3-step data pipeline:
 
-The app is implemented as a 3-step pipeline:
+Data Acquisition & Ingestion (transport_scraper_live.py): A script runs continuously to fetch, clean, enrich, and store live bus and weather data.
 
-Data Acquisition & Ingestion (transport_scraper_live.py) — continuously fetches GTFS-Realtime and weather feeds, cleans records, and persists valid pings.
+Data Storage & Analysis (analyze_data.py): A SQLite database stores the historical data, which can be queried by a dedicated analysis script to uncover patterns.
 
-Data Storage & Analysis (analyze_data.py) — stores pings and weather snapshots in transport_data.db and runs SQL analysis to extract patterns.
-
-Predictive Modeling & UI (app.py — to be built) — trains the ML model on stored RT data and exposes a terminal UI for forecasts and insights.
+Predictive Modeling & UI (app.py - to be built): A machine learning model is trained on the historical data. A terminal application provides the user interface to get travel time recommendations.
 
 🏁 Getting Started
 Prerequisites
-
 Python 3.8+
 
-pip
+pip (Python package installer)
 
-1. Clone the repository
-
+1. Clone the Repository
 git clone <your-repository-url>
 cd <your-repository-name>
 
-2. Install dependencies
+2. Install Dependencies
+Create a requirements.txt file with the following content:
+
+requests
+pandas
+scikit-learn
+gtfs-realtime-bindings
+
+Then, install the packages:
 
 pip install -r requirements.txt
-(Include requests, pandas, scikit-learn, gtfs-realtime-bindings in requirements.txt)
 
-3. Set up API keys
+3. Set Up API Keys
+You will need two free API keys:
 
-You will need two API credentials:
+Delhi OTD Key: Get it from Open Transit Data Delhi.
 
-Delhi OTD Key: obtain from Open Transit Data Delhi.
+OpenWeatherMap Key: Get it from OpenWeatherMap.
 
-OpenWeatherMap Key: obtain from OpenWeatherMap.
+Open transport_scraper_live.py and replace the placeholder values for DELHI_OTD_API_KEY and OPENWEATHERMAP_API_KEY.
 
-Open transport_scraper_live.py (or configure .env) and replace the placeholder values for DELHI_OTD_API_KEY and OPENWEATHERMAP_API_KEY.
+4. Run the Application
+Step A: Collect Data
 
-4. Run the application
+First, you need to collect data. Run the scraper for at least a few hours (ideally 24+) to build a solid dataset.
 
-Step A — Collect data
-Run the scraper to build data: python transport_scraper_live.py
-(Collect for several hours — ideally 24+ — to get a reliable dataset.)
-This creates transport_data.db and begins populating it.
+python transport_scraper_live.py
 
-Step B — Run historical analysis (optional)
-Run the analysis to view SQL reports: python analyze_data.py
+This will create a transport_data.db file and start populating it.
 
-Step C — Get travel recommendations
-When app.py is available, run: python app.py
+Step B: Run Historical Analysis (Optional)
+
+To see insights from the data you've collected, run the analysis script.
+
+python analyze_data.py
+
+Step C: Get a Travel Recommendation
+
+Once the main application is built, you will run it to get predictions.
+
+python app.py
 
 📊 Sample Output
+The final application will provide a clear recommendation in the terminal:
 
+------------------------------------------------------------------
 Travel Time Forecast for Route 548 in the Next 6 Hours:
 
-02:00 PM: ~45 mins (Forecast: Rain)
-
-02:30 PM: ~48 mins (Forecast: Rain)
-
-03:00 PM: ~42 mins (Forecast: Clouds)
-
-03:30 PM: ~35 mins (Forecast: Clear)
-
-04:00 PM: ~33 mins (Forecast: Clear)
-
-04:30 PM: ~38 mins (Forecast: Clear) ← traffic increasing
-
-05:00 PM: ~43 mins (Forecast: Clear) ← evening peak begins
+- 02:00 PM: ~45 mins (Forecast: Rain)
+- 02:30 PM: ~48 mins (Forecast: Rain)
+- 03:00 PM: ~42 mins (Forecast: Clouds)
+- 03:30 PM: ~35 mins (Forecast: Clear)
+- 04:00 PM: ~33 mins (Forecast: Clear)
+- 04:30 PM: ~38 mins (Forecast: Clear) <-- Traffic increasing
+- 05:00 PM: ~43 mins (Forecast: Clear) <-- Evening peak begins
 
 RECOMMENDATION: The optimal time to travel is around 04:00 PM.
-
-📂 Project Structure
-
-data/ — raw and processed snapshots (optional)
-
-models/ — trained ML models and preprocessing artifacts
-
-notebooks/ — EDA and experiments
-
-scripts/ or root scripts:
-
-transport_scraper_live.py — ingestion & cleaning
-
-analyze_data.py — SQL analytics
-
-train_model.py — feature engineering & training
-
-predict.py — inference utilities
-
-app.py / commuteiq_cli.py — terminal UI (user entrypoints)
-
-transport_data.db — example/generated SQLite DB
-
-requirements.txt
-
-README.md
-
-🔮 Roadmap / Future Work
-
-Migrate to PostgreSQL for scalability and concurrency.
-
-Expose ML predictions via a REST API (FastAPI) and add a web dashboard (Streamlit / React).
-
-Add visualization: interactive maps, time-series charts.
-
-Extend to multi-modal support (metro, trains).
-
-Experiment with deep time-series models (LSTM / Transformer) and probabilistic forecasts.
-
-Add alerting (email/SMS) for significant delays.
-
-📚 Learnings & Notes
-
-Real-time feeds are noisy — robust validation and anomaly handling are critical.
-
-Schema design in SQLite matters for query performance even in small deployments.
-
-Thoughtful feature engineering (rolling speeds, cyclic time encodings) often outperforms complex models.
-
-Use time-based train/test splits to avoid data leakage.
-
-Combining weather, recent speeds, and temporal signals improves prediction reliability.
-
-🤝 Contributing
-
-Contributions welcome. Typical workflow: fork → branch → PR. Include tests and update docs for notable changes.
-
-⚖️ License
-
-MIT License — see LICENSE for details.
+------------------------------------------------------------------
