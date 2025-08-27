@@ -1,5 +1,5 @@
-Real-Time Public Transport Forecaster for Delhi
-This project is an end-to-end data pipeline that acquires live public transit data for Delhi, analyzes historical patterns, and uses a machine learning model to recommend the optimal travel time for any bus route, taking future weather conditions into account.
+#Real-Time Public Transport Forecaster
+##This project is an end-to-end data pipeline that acquires live public transit data for Delhi, analyzes historical patterns, and uses a machine learning model to recommend the optimal travel time for any bus route, taking future weather conditions into account.
 
 🚀 Project Objective
 The goal of this project is to solve a common urban mobility challenge: predicting bus travel times in a city with dynamic traffic and weather. The application provides a smart recommendation engine that helps users decide the best time to start their journey to minimize travel duration.
